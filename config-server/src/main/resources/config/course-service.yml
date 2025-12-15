@@ -1,0 +1,43 @@
+# -----------------------------------------------
+# config/course-service.yml
+# -----------------------------------------------
+server:
+  port: 0 # 让服务随机分配端口，避免端口冲突
+
+spring:
+  application:
+    name: course-service
+  datasource:
+    # K8s Service Name
+    url: jdbc:postgresql://localhost:5432/unicoursedb
+    username: user
+    password: password
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: none
+      
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        default_schema: course_schema
+  # Flyway 配置（只需要配置一次，Config Server 会分发给 Course Service）
+  flyway:
+    enabled: true
+    schemas: course_schema
+    baseline-on-migrate: true
+    locations: classpath:db/migration # Flyway SQL 文件位置
+
+# Eureka Client 配置
+eureka:
+  client:
+    # Eureka Server 现在在本地运行
+    service-url:
+      defaultZone: http://localhost:8761/eureka/ 
+    # 确保 Eureka 客户端依赖存在并启用（如果 Config Server 没有提供，这里需要明确开启）
+    enabled: true
+  instance:
+    prefer-ip-address: true 
+    instance-id: ${spring.application.name}:${random.value}
+  

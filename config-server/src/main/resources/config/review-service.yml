@@ -1,0 +1,44 @@
+# -----------------------------------------------
+# config/review-service.yml 
+# -----------------------------------------------
+server:
+  port: 0 
+
+spring:
+  application:
+    name: review-service
+    
+  # --- 数据库配置 (与 course-service 共享本地 PostgreSQL 容器) ---
+  datasource:
+    url: jdbc:postgresql://localhost:5432/unicoursedb 
+    username: user
+    password: password
+    driver-class-name: org.postgresql.Driver
+  
+  # --- JPA/Hibernate 配置 ---
+  jpa:
+    hibernate:
+      ddl-auto: none # 由 Flyway 管理 Schema，禁用 Hibernate DDL
+      
+    properties:
+      hibernate:
+        default_schema: review_schema
+        
+  # --- Flyway 配置  ---
+  flyway:
+    enabled: true
+    locations: classpath:db/migration 
+    schemas: review_schema 
+    baseline-on-migrate: true
+
+# --- Eureka Client 配置 ---
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/ # 连接本地运行的 Eureka Server
+    enabled: true
+  instance:
+    # 启用 IP 地址注册，方便日志追踪
+    prefer-ip-address: true 
+    # 客户端使用服务名称和随机端口，避免端口冲突
+    instance-id: ${spring.application.name}:${random.value}

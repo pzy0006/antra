@@ -1,0 +1,16 @@
+# -----------------------------------------------
+# config/eureka-server.yml
+# -----------------------------------------------
+server:
+  port: 8761 
+
+spring:
+  application:
+    name: eureka-server
+
+eureka:
+  client:
+    register-with-eureka: false 
+    fetch-registry: false
+  server:
+    wait-time-ms-when-sync-empty: 0
